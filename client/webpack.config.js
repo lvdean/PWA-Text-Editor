@@ -14,19 +14,38 @@ module.exports = () => {
       install: './src/js/install.js'
     },
     output: {
-      filename: 'text.js',
+      filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: './src/index.html',
-        chunks: ['main'],
+        template: './index.html',
         filename: 'index.html',
       }),
       new InjectManifest({
         swSrc: './src-sw.js',
-        swDest: 'sw.js',
+        swDest: 'src-sw.js',
       }),
+
+      new WebpackPwaManifest({
+        fingerprints: false,
+        inject: true,
+        name: 'Just Another Text Editor',
+        short_name: 'J.A.T.E',
+        description: 'Take notes with Javascript syntax highlighting!',
+        background_color: '#225ca3',
+        theme_color: '#225ca3',
+        start_url: '/',
+        publicPath: './',
+        icons: [
+          {
+            src: path.resolve('src/images/logo.png'),
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join('assets', 'icons'),
+          },
+        ],
+      }),
+
       
     ],
     // CSS and babel loaders
@@ -42,8 +61,8 @@ module.exports = () => {
         use: {
           loader: 'babel-loader',
           options: {
-            targets: 'defaults',
-            presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime'],
           }
         }
        }
